@@ -7,7 +7,7 @@ const list_option = argv.l || false
 const reference_option = argv.r || false
 const delete_option = argv.d || false
 
-class Memo {
+class MemoDB {
   constructor() {
   }
 
@@ -49,18 +49,34 @@ class Memo {
   }
 }
 
-(async() => { 
-  memo = new Memo();
-  await memo.open();
+class Memo {
+  constructor() {
+    this.memoDb = new MemoDB();
+  }
 
-  if (list_option) {
-    const memos = await memo.all();
-    memos.forEach(memo => console.log(memo.title));
-  } else if (reference_option) {
+  async list() {
+    await this.memoDb.open();
+    const memos = await this.memoDb.all();
+    this.memoDb.close();
+
+    return memos;
+  }
+
+  async reference() {
+    await this.memoDb.open();
     console.log("Choose a note you want to see:");
-  } else if (delete_option) {
+    this.memoDb.close();
+  }
+
+  async delete() {
+    await this.memoDb.open();
     console.log("delete");
-  } else {
+    this.memoDb.close();
+  }
+
+  async insert() {
+    await this.memoDb.open();
+
     process.stdin.resume();
     process.stdin.setEncoding('utf8');
 
@@ -73,9 +89,23 @@ class Memo {
       lines.push(line);
     });
     await reader.on("close", async () => {
-      await memo.insert(lines[0], lines);
+      await this.memoDb.insert(lines[0], lines);
+      this.memoDb.close();
     })
   }
+}
 
-  //await memo.close();
+(async() => { 
+  memo = new Memo();
+
+  if (list_option) {
+    const memos = await memo.list();
+    memos.forEach(memo => console.log(memo.title));
+  } else if (reference_option) {
+    memo.reference();
+  } else if (delete_option) {
+    memo.delete();
+  } else {
+    memo.insert();
+  }
 })();
