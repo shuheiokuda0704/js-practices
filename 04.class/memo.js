@@ -13,7 +13,7 @@ class MemoDB {
     return new Promise((resolve, reject) => {
       this.db = new Sqlite3.Database('./test.db')
       this.db.serialize(() => {
-        this.db.run('create table if not exists memos(id INTEGER PRIMARY KEY AUTOINCREMENT, title, content')
+        this.db.run('create table if not exists memos(id INTEGER PRIMARY KEY AUTOINCREMENT, title, content)')
       })
       resolve(true)
     })
