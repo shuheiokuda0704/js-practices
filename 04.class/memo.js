@@ -68,9 +68,24 @@ class Memo {
 
   async reference() {
     await this.memoDb.open();
+    const memos = await this.memoDb.all();
 
-    console.log("Choose a note you want to see:");
+    if (memos.length === 0) return;
 
+    const question = [{
+      type: 'select',
+      name: 'memo',
+      message: 'Choose a note you want to see:',
+      choices: memos.map(function(memo) {
+        return {id: memo.id, title: memo.title, content: memo.content}
+      }),
+      result() {
+        return {id: this.focused.id, title: this.focused.name, content: this.focused.content};
+      }
+    }];
+
+    const answer = await prompt(question);
+    console.log(answer.memo.content);
     this.memoDb.close();
   }
 
@@ -92,7 +107,7 @@ class Memo {
       }
     }];
 
-    let answer = await prompt(question);
+    const answer = await prompt(question);
     await this.memoDb.delete(answer.memo.id);
     this.memoDb.close();
   }
@@ -112,7 +127,7 @@ class Memo {
       lines.push(line);
     });
     await reader.on("close", async () => {
-      await this.memoDb.insert(lines[0], lines);
+      await this.memoDb.insert(lines[0], lines.join('\n'));
       this.memoDb.close();
     })
   }
