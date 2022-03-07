@@ -9,17 +9,13 @@ module.exports = class Memo {
   }
 
   async list () {
-    await this.memoDb.open()
-
     const memos = await this.memoDb.all()
     memos.forEach(memo => console.log(memo.title))
-    this.memoDb.close()
 
     return memos
   }
 
   async reference () {
-    await this.memoDb.open()
     const memos = await this.memoDb.all()
 
     if (memos.length === 0) return
@@ -38,11 +34,9 @@ module.exports = class Memo {
 
     const answer = await prompt(question)
     console.log(answer.memo.content)
-    this.memoDb.close()
   }
 
   async delete () {
-    await this.memoDb.open()
     const memos = await this.memoDb.all()
 
     if (memos.length === 0) return
@@ -61,12 +55,9 @@ module.exports = class Memo {
 
     const answer = await prompt(question)
     await this.memoDb.delete(answer.memo.id)
-    this.memoDb.close()
   }
 
   async insert () {
-    await this.memoDb.open()
-
     process.stdin.resume()
     process.stdin.setEncoding('utf8')
 
@@ -80,7 +71,6 @@ module.exports = class Memo {
     })
     await reader.on('close', async () => {
       await this.memoDb.insert(lines[0], lines.join('\n'))
-      this.memoDb.close()
     })
   }
 }
