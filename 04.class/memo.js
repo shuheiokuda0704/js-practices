@@ -9,9 +9,13 @@ const referenceOption = argv.r || false
 const deleteOption = argv.d || false
 
 class MemoDB {
+  consructor (dbFile) {
+    this.dbFile = dbFile
+  }
+
   open () {
     return new Promise((resolve, reject) => {
-      this.db = new Sqlite3.Database('./test.db')
+      this.db = new Sqlite3.Database(this.dbFile)
       this.db.serialize(() => {
         this.db.run('create table if not exists memos(id INTEGER PRIMARY KEY AUTOINCREMENT, title, content)')
       })
@@ -49,7 +53,7 @@ class MemoDB {
 
 class Memo {
   constructor () {
-    this.memoDb = new MemoDB()
+    this.memoDb = new MemoDB('./test.db')
   }
 
   async list () {
