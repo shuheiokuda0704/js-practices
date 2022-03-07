@@ -2,7 +2,7 @@
   "name": "04.class",
   "version": "1.0.0",
   "description": "",
-  "main": "memo.js",
+  "main": "src/memo-app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
